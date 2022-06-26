@@ -1,0 +1,40 @@
+
+https://stackoverflow.com/questions/7975556/how-can-i-start-postgresql-server-on-mac-os-x
+
+# Start manually
+--> pg_ctl -D /usr/local/var/postgres start
+
+# Stop manually
+--> pg_ctl -D /usr/local/var/postgres stop
+
+# Start automatically
+"To have launchd start postgresql now and restart at login:"
+--> brew services start postgresql
+
+What is the result of pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start?
+
+What is the result of pg_ctl -D /usr/local/var/postgres status?
+
+Are there any error messages in the server.log?
+
+Make sure tcp localhost connections are enabled in pg_hba.conf:
+
+# IPv4 local connections:
+host    all    all    127.0.0.1/32    trust
+Check the listen_addresses and port in postgresql.conf:
+
+egrep 'listen|port' /usr/local/var/postgres/postgresql.conf
+
+#listen_addresses = 'localhost'        # What IP address(es) to listen on;
+#port = 5432                # (change requires restart)
+
+
+Cleaning up
+
+PostgreSQL was most likely installed via Homebrew, Fink, MacPorts or the EnterpriseDB installer.
+
+Check the output of the following commands to determine which package manager it was installed with:
+
+--> brew && brew list|grep postgres
+--> fink && fink list|grep postgres
+--> port && port installed|grep postgres
