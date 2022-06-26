@@ -1,0 +1,9 @@
+cargo install diesel_cli --no-default-features --features postgres
+diesel setup
+export DATABASE_URL="postgres://postgres:pass@localhost/corporate_directory_api"
+echo $DATABASE_URL
+diesel setup
+diesel migration generate
+diesel migration generate corporate_directory_api
+diesel migration redo ==> diesel migration revert + diesel migration run 
+

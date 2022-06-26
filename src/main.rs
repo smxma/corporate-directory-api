@@ -5,9 +5,14 @@ use{
     actix_web::{middleware,App,HttpServer},
     std::{env,io},
 };
+#[macro_use]
+extern crate diesel;
+
+
 
 mod employee;
 mod employee_controller;
+mod schema;
 mod utils;
 mod company;
 mod company_controller;

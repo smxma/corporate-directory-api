@@ -1,12 +1,12 @@
 table! {
     companies (company_name) {
         company_name -> Text,
+        id_siret -> Text,
         company_address -> Text,
         company_phone -> Text,
         domain -> Text,
         email -> Text,
-        creation_date -> Date,
-        nb_employees -> Int4,
+        creation_date -> Timestamp,
     }
 }
 
@@ -16,10 +16,10 @@ table! {
         first_name -> Text,
         last_name -> Text,
         gender -> Text,
-        birthdate -> Date,
+        birthdate -> Timestamp,
         age -> Int4,
         address -> Text,
-        start_date -> Date,
+        start_date -> Timestamp,
         company_name -> Text,
     }
 }
