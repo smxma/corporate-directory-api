@@ -12,7 +12,7 @@ use {
       Deserialize, 
       Serialize
   },
-  chrono::{DateTime, Utc, NaiveDateTime},
+  chrono::{NaiveDateTime},
   uuid::Uuid,
   super::schema::employees,
   crate::company::*,
@@ -60,10 +60,10 @@ pub struct NewEmployeeRequest {
       first_name:String,
       last_name:String,
       gender:String,
-    //   birthdate:NaiveDateTime,
+      birthdate:NaiveDateTime,
       age:i32,
       address:String,
-    //   start_date:NaiveDateTime,
+      start_date:NaiveDateTime,
       company_name:String,
 }
 
@@ -135,3 +135,24 @@ pub fn feetch_employee_by_id(_id: Uuid, conn : &DBPooledConnection) -> Option<Em
       }
 }
 
+pub fn create_new_employee(new_employee_request: NewEmployeeRequest, conn : &DBPooledConnection) -> Result<Employee,Error> {
+    use crate::schema::employees::dsl::*;
+    let work_addr = get_work_addr(new_employee_request.company_name.to_string(), &conn);
+    let new_employee = Employee {
+        id: Uuid::new_v4().to_string(),
+        first_name: new_employee_request.first_name.to_string(),
+        last_name: new_employee_request.last_name.to_string(),
+        gender: new_employee_request.gender.to_string(),
+        birthdate: new_employee_request.birthdate,
+        start_date: new_employee_request.start_date,
+        age: new_employee_request.age,
+        address: new_employee_request.address.to_string(),
+        company_name: new_employee_request.company_name.to_string(),
+        work_addr:work_addr.to_string(),
+  };
+  let new_employee_dao = new_employee.to_employee_dao();
+  match diesel::insert_into(employees).values(&new_employee_dao).execute(conn){
+      Ok(_) => Ok(new_employee),
+      Err(e) => Err(e),
+  }
+}

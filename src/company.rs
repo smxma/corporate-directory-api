@@ -12,7 +12,7 @@ use {
         Deserialize, 
         Serialize
     },
-    chrono::{DateTime, Utc, NaiveDateTime},
+    chrono::{Utc, NaiveDateTime},
     uuid::Uuid,
     super::schema::companies,
     crate::DBPooledConnection,
@@ -146,7 +146,7 @@ pub fn create_new_company(new_company_request: NewCompanyRequest, conn : &DBPool
     };
     let new_company_dao = new_company.to_company_dao();
     match diesel::insert_into(companies).values(&new_company_dao).execute(conn) {
-        Ok(_) => Ok(new_company_dao.to_company(vec![])),
+        Ok(_) => Ok(new_company_dao.to_company(i128::from(0))),
         Err(e) => Err(e),
     }
 }
