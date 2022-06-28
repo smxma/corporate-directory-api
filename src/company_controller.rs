@@ -1,6 +1,10 @@
 use {
     actix_web::HttpResponse,
     actix_web::web::{Data, Json, Path},
+    serde::{
+        Deserialize, 
+        Serialize
+    },
     crate::DBPool, 
     crate::company::*,
     crate::utils::*,
@@ -13,14 +17,19 @@ use {
 pub async fn list_companies(pool: Data<DBPool>) -> HttpResponse {
     let conn = crate::get_connection_to_pool(pool);
     let companies : Vec<Company> = feetch_all_companies(&conn);
+    println!("Companies from list_companies ==> {:?}", companies);
     ResponseType::Ok(companies).get_response()
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct getCompanyReqPattern {
+    pub company_name: String,
+}
 //Get a specific company by company name
 #[get("/companies/{company_name}")]
-pub async fn get_company(path: Path<(String, String)>, pool: Data<DBPool>) -> HttpResponse {
+pub async fn get_company(path: Path<(getCompanyReqPattern)>, pool: Data<DBPool>) -> HttpResponse {
     let conn = crate::get_connection_to_pool(pool);
-    let (dummy, company_name) = path.into_inner();
+    let company_name = path.company_name.to_string();
     let company: Option<Company> = feetch_company_by_company_name(company_name, &conn);
     match company{
         Some(company) => ResponseType::Ok(company).get_response(),

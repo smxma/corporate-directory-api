@@ -31,10 +31,12 @@ pub async fn get_employee(path: Path<(String,)>, pool: Data<DBPool>) -> HttpResp
 }
 
 //Create new employee
-#[post("/companies/{copany_name}/employees")]
-pub async fn create_employee(path: Path<(String,)>,employee_request: Json<NewEmployeeRequest>, pool: Data<DBPool>) -> HttpResponse {
+#[post("/companies/{company_name}/employees")]
+pub async fn create_employee(path: Path<String>,employee_request: Json<NewEmployeeRequest>, pool: Data<DBPool>) -> HttpResponse {
+    println!("employee_request ==> {:?}", employee_request);
+    let company_name = path.to_string();
     let conn = crate::get_connection_to_pool(pool);
-    match create_new_employee(employee_request.0,&conn){
+    match create_new_employee(employee_request.0, &conn){
         Ok(created_employee) => ResponseType::Created(created_employee).get_response(),
         Err(_) => ResponseType::NotFound(NotFoundMessage::new("Error creating employee!! ".to_string())).get_response(),
     }

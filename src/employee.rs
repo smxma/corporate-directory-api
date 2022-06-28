@@ -59,11 +59,11 @@ pub struct NewEmployeeRequest {
       first_name:String,
       last_name:String,
       gender:String,
-      birthdate:NaiveDateTime,
-      age:i32,
+      birthdate:String,
+      age:String,
       address:String,
-      start_date:NaiveDateTime,
       company_name:String,
+      start_date:String,
 }
 
 #[derive(Queryable, Insertable)]
@@ -142,9 +142,9 @@ pub fn create_new_employee(new_employee_request: NewEmployeeRequest, conn : &DBP
         first_name: new_employee_request.first_name.to_string(),
         last_name: new_employee_request.last_name.to_string(),
         gender: new_employee_request.gender.to_string(),
-        birthdate: new_employee_request.birthdate,
-        start_date: new_employee_request.start_date,
-        age: new_employee_request.age,
+        birthdate: NaiveDateTime::parse_from_str(&new_employee_request.birthdate, "%Y-%m-%d %H:%M:%S").unwrap() ,
+        start_date: NaiveDateTime::parse_from_str(&new_employee_request.start_date, "%Y-%m-%d %H:%M:%S").unwrap(),
+        age: new_employee_request.age.parse::<i32>().unwrap(),
         address: new_employee_request.address.to_string(),
         company_name: new_employee_request.company_name.to_string(),
         work_addr:work_addr.to_string(),

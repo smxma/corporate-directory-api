@@ -57,11 +57,11 @@ pub struct NewCompanyRequest {
       email:String,
 }
 
-#[derive(Queryable, Insertable)]
+#[derive(Queryable, Insertable, Debug)]
 #[table_name = "companies"]
 pub struct CompanyDAO {
-    pub id_siret:String,
     pub company_name:String,
+    pub id_siret:String,
     pub company_address:String,
     pub company_phone:String,
     pub domain:String,
@@ -141,6 +141,7 @@ pub fn feetch_company_by_company_name(_company_name: String, conn: &DBPooledConn
 
 pub fn create_new_company(new_company_request: NewCompanyRequest, conn : &DBPooledConnection) -> Result<Company,Error> {
     use crate::schema::companies::dsl::*;
+    println!("{:?}", new_company_request);
     let new_company = Company{
         company_name: new_company_request.company_name.to_string(),
         company_address: new_company_request.company_address.to_string(),
