@@ -7,7 +7,6 @@ use {
     },
     diesel::query_dsl::methods::FilterDsl,
     diesel::result::Error,
-    rand::Rng,
     serde::{
         Deserialize, 
         Serialize
@@ -88,13 +87,22 @@ impl CompanyDAO {
 
 pub fn get_nb_employees(_company_dao: &CompanyDAO, conn : &DBPooledConnection) -> i128 {
     use crate::schema::employees::dsl::*;
-    match employees.filter(company_name.eq(_company_dao.company_name.to_string())).count().get_result::<i128>(&*conn) {
-        Ok(nb_employees) => nb_employees,
+
+    match employees.filter(company_name.eq(_company_dao.company_name.to_string())).load::<EmployeeDAO>(conn) {
+        Ok(result) => result.len() as i128,
+        
         Err(e) => {
-            println!("Error: the number of employees not good {}", e);
+            println!("Error: {}", e);
             0
         }
     }
+    // match employees.filter(company_name.eq(_company_dao.company_name)).count().get_result::<i128>(conn) {
+    //     Ok(nb_employees) => nb_employees,
+    //     Err(e) => {
+    //         println!("Error: the number of employees not good {}", e);
+    //         0
+    //     }
+    // }
 }
 
 
@@ -115,7 +123,6 @@ pub fn feetch_all_companies(conn: &DBPooledConnection) -> Vec<Company> {
 }
 
 pub fn feetch_company_by_company_name(_company_name: String, conn: &DBPooledConnection) -> Option<Company> {
-    use crate::schema::employees::dsl::*;
     use crate::schema::companies::dsl::*;
     match companies
         .filter(crate::schema::companies::company_name.eq(_company_name))
@@ -134,7 +141,7 @@ pub fn feetch_company_by_company_name(_company_name: String, conn: &DBPooledConn
 
 pub fn create_new_company(new_company_request: NewCompanyRequest, conn : &DBPooledConnection) -> Result<Company,Error> {
     use crate::schema::companies::dsl::*;
-    let mut new_company = Company{
+    let new_company = Company{
         company_name: new_company_request.company_name.to_string(),
         company_address: new_company_request.company_address.to_string(),
         company_phone: new_company_request.company_phone.to_string(),

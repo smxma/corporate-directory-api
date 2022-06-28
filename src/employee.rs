@@ -7,7 +7,6 @@ use {
   },
   diesel::query_dsl::methods::FilterDsl,
   diesel::result::Error,
-  rand::Rng,
   serde::{
       Deserialize, 
       Serialize
@@ -127,7 +126,7 @@ pub fn feetch_employee_by_id(_id: Uuid, conn : &DBPooledConnection) -> Option<Em
     match employees.filter(id.eq(_id)).load::<EmployeeDAO>(conn){
         Ok(result) => 
         match result.first(){
-          Some(matched_employee) => {Some(matched_employee.to_employee(get_work_addr(matched_employee.company_name.to_string(), conn))),
+          Some(matched_employee) => {Some(matched_employee.to_employee(get_work_addr(matched_employee.company_name.to_string(), conn)))
         },
         _ => None,
         }
